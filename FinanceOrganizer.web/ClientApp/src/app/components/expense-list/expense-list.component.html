@@ -1,0 +1,14 @@
+<h4>{{date | date: "fullDate"}}</h4>
+<ul class="list-group">
+  <li class="list-group-item list-group-item-action" *ngFor="let expense of expenses"
+      [class.list-group-item-success]="expense.IsComing"
+      [class.list-group-item-danger]="!expense.IsComing">
+    {{expense.Name}}
+    <span style="float:right">
+      <span *ngIf="!expense.IsCost">-</span>
+      {{expense.Cost | number : '1.2-2'}}
+    </span>
+  </li>
+</ul>
+
+

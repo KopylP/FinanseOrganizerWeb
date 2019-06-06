@@ -1,0 +1,33 @@
+<h2>{{title}}</h2>
+<ul>
+  <li *ngFor="let date of dates" (click)="onClick(date)">
+    <div class="calendar-date">
+      <div class="calendar-head"
+           [ngClass]="{
+            'calendar-head-red': date === selectedDate,
+            'calendar-head-gray': date !== selectedDate
+           }"></div>
+      <div class="calendar-body">
+        <div class="calendar-month">{{date | date:"MMM"}}</div>
+        <div class="calendar-day">{{date | date:"dd"}}</div>
+        <div class="calendar-year">{{date | date:"y"}}</div>
+      </div>
+    </div>
+  </li>
+</ul>
+<div style="clear:both"></div>
+<div *ngIf="selectedDate">
+  <div class="container">
+    <div class="row justify-content-md-center">
+      <button class="col-lg-2 btn btn-link" (click)="changeDate(PREV)">Prev</button>
+      <button class="col-lg-2 btn btn-link" (click)="changeDate(NEXT)">Next</button>
+    </div>
+      <div class="row justify-content-md-center">
+        <div class="col-lg-4  col-sm-12">
+          <app-expense-list class="expense-list" [date]="selectedDate"></app-expense-list>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
