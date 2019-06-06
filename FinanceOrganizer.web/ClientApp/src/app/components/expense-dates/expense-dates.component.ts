@@ -20,6 +20,7 @@ export class ExpenseDatesComponent {
     this.userName = "Admin";
     this.loadData();
     this.title = "Dates";
+    
   }
 
   loadData() {
@@ -27,6 +28,7 @@ export class ExpenseDatesComponent {
     const url = this.baseUrl + "api/Expense/" + this.userName + "/dates";
     this.http.get<Date[]>(url).subscribe(res => {
       this.dates = res;
+      this.selectedDate = this.dates.slice(-1)[0];
     }, err => {
       console.log(err);
     });

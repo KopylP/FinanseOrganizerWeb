@@ -73,9 +73,9 @@ namespace FinanceOrganizer.web.Controllers
         [HttpPut]
         public IActionResult Put([FromBody]ExpenseViewModel model)
         {
+            //TODO
             //Якщо model = null поверни помилку сервера
             if (model == null) return StatusCode(500);
-
             Expense expense = new Expense();
             expense.Cost = model.Cost;
             expense.Id = Guid.NewGuid().ToString();

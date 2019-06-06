@@ -46,4 +46,7 @@ ul > li{
   float: left;
   margin: 0 5px 0 0;
 }
+#btn-create-block {
+  margin-top: 10px;
+}
 

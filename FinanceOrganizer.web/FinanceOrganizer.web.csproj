@@ -34,12 +34,14 @@
 
   <ItemGroup>
     <None Remove="ClientApp\Expense.ts" />
+    <None Remove="ClientApp\src\app\components\expense-edit\expense-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\expense-list\expense-list.component.ts" />
     <None Remove="ClientApp\src\app\components\expense-dates\expense-dates.component.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\components\expense-dates\expense-dates.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\expense-edit\expense-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\Expense.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\expense-list\expense-list.component.ts" />
   </ItemGroup>

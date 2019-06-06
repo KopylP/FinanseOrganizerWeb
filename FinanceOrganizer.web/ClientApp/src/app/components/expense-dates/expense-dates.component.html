@@ -18,15 +18,20 @@
 <div style="clear:both"></div>
 <div *ngIf="selectedDate">
   <div class="container">
+
     <div class="row justify-content-md-center">
       <button class="col-lg-2 btn btn-link" (click)="changeDate(PREV)">Prev</button>
       <button class="col-lg-2 btn btn-link" (click)="changeDate(NEXT)">Next</button>
     </div>
-      <div class="row justify-content-md-center">
-        <div class="col-lg-4  col-sm-12">
-          <app-expense-list class="expense-list" [date]="selectedDate"></app-expense-list>
-        </div>
+    <div class="row justify-content-md-center">
+      <div class="col-lg-4  col-sm-12">
+        <app-expense-list class="expense-list" [date]="selectedDate"></app-expense-list>
       </div>
     </div>
+    <div class="row justify-content-md-center" id="btn-create-block">
+      <a [routerLink]="['/expense/create']" class="col-lg-1  btn btn-success">Create</a>
+      
+    </div>
+  </div>
   </div>
 
