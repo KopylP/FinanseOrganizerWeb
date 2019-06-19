@@ -4,9 +4,12 @@ export interface Expense {
   Cost: number;
 
   Name: string;
+
   CreatedDate: Date;
 
   IsComing: boolean;
 
   UserId: string;
+
+  Path: string;
 }

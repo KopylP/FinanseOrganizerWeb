@@ -37,13 +37,23 @@
     <None Remove="ClientApp\src\app\components\expense-edit\expense-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\expense-list\expense-list.component.ts" />
     <None Remove="ClientApp\src\app\components\expense-dates\expense-dates.component.ts" />
+    <None Remove="ClientApp\src\app\components\file-upload-component\file-upload-component.ts" />
+    <None Remove="ClientApp\src\app\interfaces\Photo.ts" />
+    <None Remove="ClientApp\src\app\services\expense.service.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\components\expense-dates\expense-dates.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\expense-edit\expense-edit.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\file-upload-component\file-upload-component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\Expense.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\expense-list\expense-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\interfaces\Photo.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\expense.service.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Files\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

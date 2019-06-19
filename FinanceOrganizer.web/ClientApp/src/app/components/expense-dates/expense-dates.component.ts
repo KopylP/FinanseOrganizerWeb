@@ -1,5 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { ExpenseService } from "../../services/expense.service";
 
 @Component({
   selector: "expense-dates",
@@ -16,7 +17,8 @@ export class ExpenseDatesComponent {
   selectedDate: Date;
   title: string;
   constructor(private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string) {
+    @Inject('BASE_URL') private baseUrl: string,
+    private expenseService: ExpenseService) {
     this.userName = "Admin";
     this.loadData();
     this.title = "Dates";
@@ -25,8 +27,7 @@ export class ExpenseDatesComponent {
 
   loadData() {
     //{userName}/dates
-    const url = this.baseUrl + "api/Expense/" + this.userName + "/dates";
-    this.http.get<Date[]>(url).subscribe(res => {
+    this.expenseService.getDates(this.userName).subscribe(res => {
       this.dates = res;
       this.selectedDate = this.dates.slice(-1)[0];
     }, err => {

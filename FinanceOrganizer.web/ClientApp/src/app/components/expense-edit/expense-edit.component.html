@@ -1,19 +1,27 @@
 <h3>{{title}}</h3>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="form-group" [ngClass]="{'has-error has-feedback': hasError('Name')}">
+  <div class="form-group">
     <label for="name">Name of Expense</label>
     <input type="text" formControlName="Name" required
+           [ngClass]="{
+              'is-invalid': hasError('Name'),
+              'is-valid': isChanged('Name') && !hasError('Name')
+           }"
            class="form-control" id="name" placeholder="Enter Name">
     <small *ngIf="hasError('Name')"
-           class="form-text help-block">This field is required!</small>
+           class="invalid-feedback">This field is required!</small>
   </div>
 
-  <div class="form-group" [ngClass]="{'has-error has-feedback': hasError('Cost')}">
+  <div class="form-group">
     <label for="cost">Cost of Expense</label>
     <input type="number" formControlName="Cost" required
+           [ngClass]="{
+            'is-invalid': hasError('Cost'),
+            'is-valid': isChanged('Cost') && !hasError('Cost')
+           }"
            class="form-control" id="cost" placeholder="0.0">
     <small *ngIf="hasError('Cost')"
-           class="form-text help-block">This field is required!</small>
+           class="invalid-feedback">This field is required!</small>
   </div>
 
   <div class="form-check">
@@ -25,6 +33,22 @@
     </label>
 
   </div>
-  <button (click)="onBack()" class="btn btn-warning btn-back" >Back</button> 
+  <img *ngIf="expense.Path" [src]="baseUrl  + expense.Path"/>
+  <div class="form-group" id="upload">
+    <app-file-upload [ngClass]="{
+            'is-invalid': hasError('Image'),
+            'is-valid': isChanged('Image') && !hasError('Image')
+           }"
+                     formControlName="Image"
+                     [progress]="progress"></app-file-upload>
+
+
+    <small *ngIf="hasError('Image')" style="color:red">
+      The required types are .jpg, .png, .jpeg
+    </small>
+  </div>
+
+
+  <button (click)="onBack()" class="btn btn-warning btn-back">Back</button>
   <button type="submit" class="btn btn-success" [disabled]="form.invalid">Save</button>
 </form>

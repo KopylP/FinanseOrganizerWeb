@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,5 +25,7 @@ namespace FinanceOrganizer.web.ViewModels
         public bool IsComing { get; set; }
 
         public string UserId { get; set; }
+
+        public string Path { get; set; }
     }
 }

@@ -34,6 +34,8 @@ namespace FinanceOrganizer.web
             {
                 options.UseSqlServer(connectionString);
             });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +72,8 @@ namespace FinanceOrganizer.web
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();

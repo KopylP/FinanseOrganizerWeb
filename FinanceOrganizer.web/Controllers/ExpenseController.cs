@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FinanceOrganizer.web.Data;
 using FinanceOrganizer.web.Data.Models;
 using FinanceOrganizer.web.ViewModels;
 using Mapster;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,10 +15,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace FinanceOrganizer.web.Controllers
 {
     // GET: api/<controller>
+
     public class ExpenseController : BaseApiController
     {
+        #region fields
+        IHostingEnvironment _env;
+        #endregion
+
         #region constructor
-        public ExpenseController(ApplicationDbContext context) :base(context) {}
+        public ExpenseController(ApplicationDbContext context, IHostingEnvironment enviroment) :base(context)
+        {
+            _env = enviroment;
+        }
         #endregion
 
         #region methods
@@ -53,8 +63,25 @@ namespace FinanceOrganizer.web.Controllers
                 .Where(p => p.UserId == user.Id)
                 .Where(p =>
                     p.CreatedDate.Date.Equals(time.Date))
+                .OrderBy(p => p.CreatedDate)
                 .ToArray();
             return new JsonResult(expenses.Adapt<ExpenseViewModel[]>(), _settings);
+        }
+
+        [HttpPost("file/load"), DisableRequestSizeLimit]
+        public async Task<IActionResult> PostFile([FromForm] PhotoViewModel model)
+        {
+            if (model == null) return StatusCode(500);
+            var expense = _context.Expenses.Find(model.ExpenseId);
+            if (expense == null) return NotFound();
+            string path = _env.WebRootPath  + expense.Path;
+            using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                await model.PhotoFile.CopyToAsync(stream);
+            }
+            return new JsonResult(new {
+                msg = "File have being successfully written"
+            });
         }
         #endregion
 
@@ -66,8 +93,14 @@ namespace FinanceOrganizer.web.Controllers
             if (expense == null) return NotFound(new {
                 Error = $"Has no Expense which has id {id}"
             });
+            var model = expense.Adapt<ExpenseViewModel>();
 
-            return new JsonResult(expense.Adapt<ExpenseViewModel>(), _settings);
+            FileInfo f = new FileInfo(_env.WebRootPath + expense.Path);
+            if (f.Exists)
+                model.Path = expense.Path;
+            else
+                model.Path = null;
+            return new JsonResult(model, _settings);
         }
 
         [HttpPut]
@@ -84,6 +117,8 @@ namespace FinanceOrganizer.web.Controllers
             expense.UserId = _context.ApplicationUsers.Where(p => p.UserName == "Admin").FirstOrDefault().Id;
             expense.CreatedDate = DateTime.Now;
             expense.LastModifiedDate = expense.CreatedDate;
+
+
             _context.Add(expense);
             _context.SaveChanges();
             return new JsonResult(expense.Adapt<ExpenseViewModel>(), _settings);

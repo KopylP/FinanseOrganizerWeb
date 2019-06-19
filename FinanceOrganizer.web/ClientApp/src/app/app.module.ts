@@ -10,6 +10,8 @@ import { ExpenseDatesComponent } from './components/expense-dates/expense-dates.
 import { ExpenseListComponent } from './components/expense-list/expense-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExpenseEditComponent } from './components/expense-edit/expense-edit.component';
+import { FileUploadComponent } from './components/file-upload-component/file-upload-component';
+import { ExpenseService } from './services/expense.service';
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { ExpenseEditComponent } from './components/expense-edit/expense-edit.com
     NavMenuComponent,
     ExpenseDatesComponent,
     ExpenseListComponent,
-    ExpenseEditComponent
+    ExpenseEditComponent,
+    FileUploadComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -32,7 +35,7 @@ import { ExpenseEditComponent } from './components/expense-edit/expense-edit.com
       { path: 'expense/edit/:id', component: ExpenseEditComponent }
     ])
   ],
-  providers: [],
+  providers: [ExpenseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

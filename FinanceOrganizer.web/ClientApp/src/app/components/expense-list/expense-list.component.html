@@ -6,7 +6,7 @@
     <a [routerLink]="['/expense/edit/', expense.Id]">
       {{expense.Name}}
       <span style="float:right">
-        <span *ngIf="!expense.IsCost">-</span>
+        <span *ngIf="!expense.IsComing">-</span>
         {{expense.Cost | number : '1.2-2'}}
       </span>
     </a>

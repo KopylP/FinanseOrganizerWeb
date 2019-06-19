@@ -34,6 +34,9 @@ namespace FinanceOrganizer.web.Data.Models
 
         public string UserId { get; set; }
 
+        [NotMapped]
+        public string Path => "/Files/" + Id + ".jpg"; 
+
         public virtual IEnumerable<ExpensePosition> ExpensePositions { get; set; }
         [ForeignKey("UserId")]
         public virtual ApplicationUser ApplicationUser { get; set; }

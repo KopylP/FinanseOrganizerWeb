@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { formatDate } from "@angular/common";
 import { Expense } from "../../interfaces/Expense";
+import { ExpenseService } from "../../services/expense.service";
 
 @Component({
   selector: "app-expense-list",
@@ -17,7 +18,8 @@ export class ExpenseListComponent implements OnInit, OnChanges {
   
   constructor(private http: HttpClient,
     private router: Router,
-    @Inject('BASE_URL') private baseUrl: string) {
+    @Inject('BASE_URL') private baseUrl: string,
+    private expenseService: ExpenseService) {
     this.userName = "Admin";
     this.date = new Date();
     
@@ -38,14 +40,13 @@ export class ExpenseListComponent implements OnInit, OnChanges {
   }
 
   loadData(): void {
-    console.log(window.navigator.languages[0]);
-    const url = this.baseUrl + "api/Expense/" + this.userName + "/dates/" + formatDate(this.date, "yyyy-MM-dd", "En");
-    console.log(url);
-    this.http.get<Expense[]>(url).subscribe(res => {
+    this.expenseService.getExpensesByDate(this.userName, this.date).subscribe(res => {
       this.expenses = res;
     }, err => {
       console.log(err);
     });
   }
+
+  
 
 }
