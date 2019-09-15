@@ -1,37 +1,44 @@
 <h2>{{title}}</h2>
-<ul>
-  <li *ngFor="let date of dates" (click)="onClick(date)">
-    <div class="calendar-date">
-      <div class="calendar-head"
-           [ngClass]="{
-            'calendar-head-red': date === selectedDate,
-            'calendar-head-gray': date !== selectedDate
-           }"></div>
-      <div class="calendar-body">
-        <div class="calendar-month">{{date | date:"MMM"}}</div>
-        <div class="calendar-day">{{date | date:"dd"}}</div>
-        <div class="calendar-year">{{date | date:"y"}}</div>
-      </div>
-    </div>
-  </li>
-</ul>
+
+
+
+
 <div style="clear:both"></div>
 <div *ngIf="selectedDate">
   <div class="container">
+    <div class="row">
+      <div class="container-fluid col-lg-4 container-main">
+        <div class="header">
+          <h4>{{selectedDate | date: "fullDate"}}</h4>
+          <p>Generally {{expenseList.Amount|number:"1.0-2"}}$</p>
+          <button (click)="createExpense()" class="create-new" mat-fab><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="row date-picker justify-content-md-center">
+          <mat-form-field class="col-lg-12">
+            <input matInput readonly [(ngModel)]="selectedDate" [matDatepicker]="myDatepicker" (dateChange)="onChangeDateInPicker($event.value)" [matDatepickerFilter]="dateFilter">
+            <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #myDatepicker (change)="onDateChange()"></mat-datepicker>
+          </mat-form-field>
+        </div>
 
-    <div class="row justify-content-md-center">
-      <button class="col-lg-2 btn btn-link" (click)="changeDate(PREV)">Prev</button>
-      <button class="col-lg-2 btn btn-link" (click)="changeDate(NEXT)">Next</button>
-    </div>
-    <div class="row justify-content-md-center">
-      <div class="col-lg-4  col-sm-12">
-        <app-expense-list class="expense-list" [date]="selectedDate"></app-expense-list>
+        <div class="row justify-content-md-center">
+          <button class="col-lg-6 btn btn-link" (click)="changeDate(PREV)">Prev</button>
+          <button class="col-lg-6 btn btn-link" (click)="changeDate(NEXT)">Next</button>
+        </div>
+        <div class="row justify-content-md-center">
+          <div class="col-lg-12  col-sm-12">
+            <app-expense-list #expenseList class="expense-list" [date]="selectedDate"></app-expense-list>
+          </div>
+        </div>
+        <!--<div class="row justify-content-md-center">
+          <div>
+            
+          </div>
+        </div>-->
       </div>
     </div>
-    <div class="row justify-content-md-center" id="btn-create-block">
-      <a [routerLink]="['/expense/create']" class="col-lg-1  btn btn-success">Create</a>
-      
-    </div>
+
   </div>
-  </div>
+</div>
+
 

@@ -55,6 +55,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpGet("{userName}/dates/{date}")]
         public IActionResult Date(string userName, string date)
         {
+
             var user = _context.ApplicationUsers.FirstOrDefault(p => p.UserName == userName);
             if (user == null) return NotFound();
             var time = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
@@ -63,9 +64,13 @@ namespace FinanceOrganizer.web.Controllers
                 .Where(p => p.UserId == user.Id)
                 .Where(p =>
                     p.CreatedDate.Date.Equals(time.Date))
-                .OrderBy(p => p.CreatedDate)
-                .ToArray();
-            return new JsonResult(expenses.Adapt<ExpenseViewModel[]>(), _settings);
+                .OrderBy(p => p.CreatedDate);
+            var expenseModels = expenses.Adapt<ExpenseViewModel[]>().ToList();
+            expenseModels.ForEach(p =>
+           {
+                if (!System.IO.File.Exists(_env.WebRootPath + p.Path)) p.Path = null;
+           });
+            return new JsonResult(expenseModels.ToArray(), _settings);
         }
 
         [HttpPost("file/load"), DisableRequestSizeLimit]
@@ -147,6 +152,7 @@ namespace FinanceOrganizer.web.Controllers
             var expense = _context.Expenses.Where(p => p.Id == id).FirstOrDefault();
             if (expense == null) return NotFound();
             _context.Expenses.Remove(expense);
+            _context.SaveChanges();
             return new NoContentResult();
         }
         #endregion

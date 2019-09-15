@@ -1,10 +1,14 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Expense } from "../../interfaces/Expense";
 import { FormBuilder, FormGroup, FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
 import { HttpClient, HttpHeaders, HttpEventType } from "@angular/common/http";
 import { Photo } from "../../interfaces/Photo";
 import { ExpenseService } from "../../services/expense.service";
+import { Location } from "@angular/common";
+import { Observable } from "rxjs";
+import { ConfirmDialogService } from "../../services/confirm-dialog.service";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
 @Component({
   selector: "expense-edit",
@@ -19,18 +23,23 @@ export class ExpenseEditComponent{
   title: string;
   id: string;
   progress: number;
+  isSaved = false;
 
   constructor(private activatedRoute: ActivatedRoute,
     private http: HttpClient,
-    private router: Router,
-    private fb: FormBuilder,  
+    //private router: Router,
+    private fb: FormBuilder,
     @Inject('BASE_URL') private baseUrl: string,
-    private expenseService: ExpenseService) {
+    //private location: Location,
+    private confirmDialogService: ConfirmDialogService,
+    private expenseService: ExpenseService,
+    private dialogRef: MatDialogRef<ExpenseEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data) {
     this.createForm();
     this.expense = <Expense>{};
-    this.editMode = (this.activatedRoute.snapshot.url[1].path === 'edit');
-    this.id = activatedRoute.snapshot.params["id"];
-    
+    this.editMode = this.data.editMode;
+    this.id = this.data.id;
+
     if (this.editMode) {
       this.title = "Edit";
       this.loadData();
@@ -70,6 +79,10 @@ export class ExpenseEditComponent{
     });
   }
 
+  isFormDirty(): boolean {
+    return this.form.dirty;
+  }
+
   getFormControl(name: string) {
     return this.form.get(name);
   }
@@ -89,21 +102,27 @@ export class ExpenseEditComponent{
     return e && (e.dirty || e.touched) && !e.valid;
   }
 
+
   onSubmit() {
 
     let tempExp = <Expense>{};
     tempExp.Name = this.form.controls.Name.value;
     tempExp.Cost = this.form.controls.Cost.value;
     tempExp.IsComing = this.form.controls.IsComing.value;
-
+    this.isSaved = true;
 
 
     if (this.editMode) {
       tempExp.Id = this.expense.Id;
       tempExp.UserId = this.expense.UserId;
-
       this.expenseService.post(tempExp).subscribe(res => {
+        this.expense = res;
+        this.onBack();
         console.log(res.Name + " updated");
+        let photo = this.form.controls.Image.value;
+        if (photo !== null) {
+          this.updatePhoto(photo);
+        }
       }, err => {
         console.log(err);
       });
@@ -113,6 +132,7 @@ export class ExpenseEditComponent{
       this.expenseService.put(tempExp).subscribe(res => {
         console.log(res.Name + " added");
         this.expense = res;
+        this.isSaved = true;
         let photo = this.form.controls.Image.value;
         console.log(this.form.controls.Image.value);
         if (photo !== null) {
@@ -125,8 +145,14 @@ export class ExpenseEditComponent{
         console.log(err);
       });
     }
+  }
 
-    
+
+
+  canDeactivate(): boolean | Observable<boolean> {
+    if (this.isFormDirty() && !this.isSaved)
+      return this.confirmDialogService.openConfirmDialog("Are you sure exit?").afterClosed();
+    return true;
   }
 
   updatePhoto(photo: any) {
@@ -183,13 +209,10 @@ export class ExpenseEditComponent{
   }
 
   onBack() {
-
-    this.router.navigate([""]);
-    
+  //  if (this.editMode)
+  //    this.router.navigate(["dates", this.expense.CreatedDate]);
+  //  else
+    //    this.router.navigate([""]);
+    this.dialogRef.close(this.expense);
   }
-
-
-  
-
-
 }

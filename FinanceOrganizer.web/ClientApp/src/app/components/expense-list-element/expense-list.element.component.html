@@ -1,0 +1,24 @@
+<div id="content"
+     [class.red]="!expense.IsComing"
+     [class.green]="expense.IsComing"
+     (click)="changeExpense()">
+  <div class="general">
+    <div class="name">{{expense.Name}}</div>
+    <div style="clear:both"></div>
+    <div class="time">{{expense.CreatedDate|date:"hh:mm"}}</div>
+  </div>
+
+
+  <div class="cost-body">
+    <div class="cost-details">
+      <i class="fas fa-dollar-sign"></i>
+      <div class="cost">{{expense.Cost | number:'1.2-2'}}</div>
+    </div>
+    <div class="statuses">
+      <i class="fas fa-trash" (click)="deleteExpense($event)"></i>
+      <i *ngIf="expense.Path" class="fas fa-paperclip file-status"></i>
+    </div>
+  </div>
+</div>
+<div style="clear:both"></div>
+<div id="splitter"></div>

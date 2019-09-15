@@ -4,11 +4,17 @@ import { Router } from "@angular/router";
 import { formatDate } from "@angular/common";
 import { Expense } from "../../interfaces/Expense";
 import { ExpenseService } from "../../services/expense.service";
+import { trigger, animate, style, transition, state } from "@angular/animations";
 
 @Component({
   selector: "app-expense-list",
   templateUrl: "./expense-list.component.html",
-  styleUrls: ["./expense-list.component.css"]
+  styleUrls: ["./expense-list.component.css"],
+  animations: [trigger("expenseElementTrigger", [
+    state('void', style({ opacity: 0 })),
+    state('*', style({ opacity: '*' })),
+    transition('void => *', animate('0.3s'))
+  ])]
 })
 export class ExpenseListComponent implements OnInit, OnChanges {
 
@@ -27,6 +33,20 @@ export class ExpenseListComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     
+  }
+
+  onElementDelete(event: any, expense: Expense) {
+    let index = this.expenses.indexOf(expense);
+    if (index !== -1)
+      this.expenses.splice(index, 1);
+  }
+
+  get Amount() {
+    let sum = 0;
+    for (let expense of this.expenses) {
+      sum += expense.IsComing ? expense.Cost : -expense.Cost;
+    }
+    return sum;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
