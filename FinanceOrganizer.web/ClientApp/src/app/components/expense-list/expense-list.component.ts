@@ -5,6 +5,7 @@ import { formatDate } from "@angular/common";
 import { Expense } from "../../interfaces/Expense";
 import { ExpenseService } from "../../services/expense.service";
 import { trigger, animate, style, transition, state } from "@angular/animations";
+import { ExpenseStatePipe } from "../pipes/expense-state.pipe";
 
 @Component({
   selector: "app-expense-list",
@@ -21,7 +22,11 @@ export class ExpenseListComponent implements OnInit, OnChanges {
   @Input() date: Date;
   userName: string;
   expenses: Expense[];
-  
+
+
+
+  currentState = ExpenseStatePipe.StateEnum.ALL;
+
   constructor(private http: HttpClient,
     private router: Router,
     @Inject('BASE_URL') private baseUrl: string,

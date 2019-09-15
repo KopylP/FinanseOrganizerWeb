@@ -25,7 +25,8 @@ import { MatDialogModule } from '@angular/material';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogService } from './services/confirm-dialog.service';
 import { ExpenseEditDialogService } from './services/expense-edit-dialog.service';
-
+import { MatButtonToggleModule } from '@angular/material/button-toggle'; 
+import { ExpenseStatePipe } from './components/pipes/expense-state.pipe';
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,7 +36,8 @@ import { ExpenseEditDialogService } from './services/expense-edit-dialog.service
     ExpenseEditComponent,
     FileUploadComponent,
     ConfirmDialogComponent,
-    ExpenseListElementComponent
+    ExpenseListElementComponent,
+    ExpenseStatePipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -52,6 +54,7 @@ import { ExpenseEditDialogService } from './services/expense-edit-dialog.service
     MatNativeDateModule,
     MatSlideToggleModule,
     BrowserAnimationsModule,
+    MatButtonToggleModule,
     RouterModule.forRoot([
       { path: '', component: ExpenseDatesComponent, pathMatch: 'full' },
       { path: 'dates/:date', component: ExpenseDatesComponent },
@@ -67,7 +70,8 @@ import { ExpenseEditDialogService } from './services/expense-edit-dialog.service
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatButtonToggleModule
   ],
   providers: [ExpenseService,
     MatDatepickerIntl,

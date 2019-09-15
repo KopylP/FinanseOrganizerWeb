@@ -20,7 +20,7 @@ export class ExpenseDatesComponent {
   dates: Date[];
   selectedDate: Date;
   title: string;
-  @ViewChild(ExpenseListComponent, { static: false })
+  @ViewChild(ExpenseListComponent)
   private expenseListComponent: ExpenseListComponent;
   constructor(private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
@@ -97,7 +97,8 @@ export class ExpenseDatesComponent {
   createExpense() {
     this.expenseEditDialogService.openEditExpenseDialog(false)
       .afterClosed().subscribe(res => {
-        this.loadData();
+        if (res)
+          this.loadData();
       });
   }
 

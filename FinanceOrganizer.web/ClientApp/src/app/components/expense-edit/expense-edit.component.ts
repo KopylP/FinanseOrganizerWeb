@@ -213,6 +213,9 @@ export class ExpenseEditComponent{
   //    this.router.navigate(["dates", this.expense.CreatedDate]);
   //  else
     //    this.router.navigate([""]);
-    this.dialogRef.close(this.expense);
+    if (this.isSaved)
+      this.dialogRef.close(this.expense);
+    else
+      this.dialogRef.close();
   }
 }

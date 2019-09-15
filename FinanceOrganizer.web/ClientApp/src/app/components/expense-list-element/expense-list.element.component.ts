@@ -29,7 +29,8 @@ export class ExpenseListElementComponent implements OnInit {
   changeExpense() {
     this.expenseEditDialogService.openEditExpenseDialog(true, this.expense.Id)
       .afterClosed().subscribe(res => {
-        this.expense = res;
+        if(res)
+          this.expense = res;
       });
   }
 

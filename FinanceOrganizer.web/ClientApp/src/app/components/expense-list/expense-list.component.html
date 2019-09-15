@@ -1,3 +1,18 @@
-<expense-list-element [@expenseElementTrigger] (delete)="onElementDelete($event, expense)" [expense]="expense" *ngFor="let expense of expenses"></expense-list-element>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12 col-mat-button">
+      <mat-button-toggle-group [(ngModel)]="currentState">
+        <mat-button-toggle value="expenses">Expenses</mat-button-toggle>
+        <mat-button-toggle value="all">All</mat-button-toggle>
+        <mat-button-toggle value="incomes">Incomes</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <expense-list-element [@expenseElementTrigger] (delete)="onElementDelete($event, expense)" [expense]="expense" *ngFor="let expense of expenses | expenseState: currentState"></expense-list-element>
+    </div>
+  </div>
+</div>
 
 
