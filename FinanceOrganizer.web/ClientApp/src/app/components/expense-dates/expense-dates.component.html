@@ -10,7 +10,7 @@
       <div class="container-fluid col-lg-4 container-main">
         <div class="header">
           <h4>{{selectedDate | date: "fullDate"}}</h4>
-          <p>Generally {{expenseList.Amount|number:"1.0-2"}}$</p>
+          <p>Generally {{expenseList.currentAmount|number:"1.0-2"}}$</p>
           <button (click)="createExpense()" class="create-new" mat-fab><i class="fas fa-plus"></i></button>
         </div>
         <div class="row date-picker justify-content-md-center">
