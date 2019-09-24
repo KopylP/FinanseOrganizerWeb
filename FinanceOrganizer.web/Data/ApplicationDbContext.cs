@@ -1,5 +1,6 @@
 ﻿using FinanceOrganizer.web.Data.Models;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FinanceOrganizer.web.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
         #region constructor
@@ -20,7 +21,6 @@ namespace FinanceOrganizer.web.Data
         #endregion
 
         #region properties
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<MonthLimit> Limits { get; set; }
         #endregion

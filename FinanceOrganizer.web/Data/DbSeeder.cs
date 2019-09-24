@@ -1,4 +1,5 @@
 ﻿using FinanceOrganizer.web.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,27 +9,53 @@ namespace FinanceOrganizer.web.Data
 {
     public static class DbSeeder
     {
-        public static void Seed(ApplicationDbContext context)
+        public static async Task SeedAsync(ApplicationDbContext context, UserManager<ApplicationUser> userMenager, RoleManager<IdentityRole> roleManager)
         {
-            if (!context.ApplicationUsers.Any()) CreateUsers(context);
+            if (!context.Users.Any()) await CreateUsersAsync(context, userMenager, roleManager);
             if (!context.Expenses.Any()) CreateExpenses(context);
         }
-        private static void CreateUsers(ApplicationDbContext context)
+        private static async Task CreateUsersAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
+            string role_Administrator = "Admin";
+            string role_RegisteredUser = "User";
+
+            async Task createdRolesAsync()
+            {
+                if (!await roleManager.RoleExistsAsync(role_Administrator))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role_Administrator));
+                }
+
+                if (!await roleManager.RoleExistsAsync(role_RegisteredUser))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role_RegisteredUser));
+                }
+            }
+
+            createdRolesAsync().GetAwaiter().GetResult();
+            context.SaveChanges();
             ApplicationUser user = new ApplicationUser
             {
                 UserName = "Admin",
                 Email = "email@admin.com",
-                Id = Guid.NewGuid().ToString(),
+                SecurityStamp = Guid.NewGuid().ToString(),
                 CreatedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now
             };
-            context.ApplicationUsers.Add(user);
+            user.EmailConfirmed = true;
+            user.LockoutEnabled = false;
+            if (await userManager.FindByNameAsync(user.UserName) == null)
+            {
+                await userManager.CreateAsync(user, "Pass4Admin");
+                await userManager.AddToRoleAsync(user, role_RegisteredUser);
+                await userManager.AddToRoleAsync(user, role_Administrator);
+            }
             context.SaveChanges();
         }
         private static void CreateExpenses(ApplicationDbContext context)
         {
-            var user = context.ApplicationUsers.Where(p => p.UserName == "Admin").FirstOrDefault();
+            var user = context.Users.Where(p => p.UserName == "Admin").FirstOrDefault();
             Expense expense = new Expense
             {
                 Cost = 2.5,

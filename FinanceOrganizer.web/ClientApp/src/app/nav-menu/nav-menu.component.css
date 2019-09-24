@@ -21,3 +21,15 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
+
+a {
+  color:white;
+  font-size: 1.2em;
+}
+a:hover {
+  color:#ddd;
+}
+
+a > i {
+  margin-right: 5px;
+}

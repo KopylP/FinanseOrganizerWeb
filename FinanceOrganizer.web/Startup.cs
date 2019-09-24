@@ -1,11 +1,17 @@
 using FinanceOrganizer.web.Data;
+using FinanceOrganizer.web.Data.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace FinanceOrganizer.web
 {
@@ -34,8 +40,36 @@ namespace FinanceOrganizer.web
             {
                 options.UseSqlServer(connectionString);
             });
+           
+            services.AddIdentity<ApplicationUser, IdentityRole>(opt => {
+                opt.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddAuthentication(opts =>
+            {
+                opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(cnf =>
+            {
+                cnf.RequireHttpsMetadata = false;
+                cnf.SaveToken = true;
+                cnf.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    ValidIssuer = Configuration["Auth:Jwt:Issurer"],
+                    ValidAudience = Configuration["Auth:Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration["Auth:Jwt:Key"])
+                        ),
+                    ClockSkew = TimeSpan.Zero,
 
+                    RequireExpirationTime = true,
+                    ValidateIssuer = true, 
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = true
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +86,7 @@ namespace FinanceOrganizer.web
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -77,8 +111,10 @@ namespace FinanceOrganizer.web
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                var userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>();
+                var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
                 dbContext.Database.Migrate();
-                DbSeeder.Seed(dbContext);
+                DbSeeder.SeedAsync(dbContext, userManager, roleManager).GetAwaiter().GetResult();
             }
         }
     }

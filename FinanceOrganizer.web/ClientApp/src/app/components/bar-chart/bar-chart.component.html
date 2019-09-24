@@ -1,0 +1,19 @@
+<div>
+  <div #containerBarChart>
+  </div>
+  <div class="container">
+    <div class="row">
+      <mat-form-field class="col-lg-6">
+        <input matInput [matDatepicker]="picker" placeholder="To date">
+        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <mat-datepicker #toPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="col-lg-6">
+        <input matInput [matDatepicker]="picker" placeholder="From date">
+        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+

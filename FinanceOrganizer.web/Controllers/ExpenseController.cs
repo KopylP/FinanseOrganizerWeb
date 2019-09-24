@@ -33,7 +33,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpGet("all/{userName}")]
         public IActionResult All(string userName)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(p => p.UserName == userName);
+            var user = _context.Users.FirstOrDefault(p => p.UserName == userName);
             if (user == null) return NotFound(); 
             var expenses = _context.Expenses.Where(p => p.UserId == user.Id).ToArray();
             return new JsonResult(expenses.Adapt<ExpenseViewModel[]>(), _settings);
@@ -42,7 +42,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpGet("{userName}/dates")]
         public IActionResult Dates(string userName)
         {
-            var user = _context.ApplicationUsers.FirstOrDefault(p => p.UserName == userName);
+            var user = _context.Users.FirstOrDefault(p => p.UserName == userName);
             if (user == null) return NotFound();
             var expDates = _context.Expenses
                 .Where(p => p.UserId == user.Id)
@@ -56,7 +56,7 @@ namespace FinanceOrganizer.web.Controllers
         public IActionResult Date(string userName, string date)
         {
 
-            var user = _context.ApplicationUsers.FirstOrDefault(p => p.UserName == userName);
+            var user = _context.Users.FirstOrDefault(p => p.UserName == userName);
             if (user == null) return NotFound();
             var time = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             var expenses = _context
@@ -119,7 +119,7 @@ namespace FinanceOrganizer.web.Controllers
             expense.Id = Guid.NewGuid().ToString();
             expense.Name = model.Name;
             expense.IsComing = model.IsComing;
-            expense.UserId = _context.ApplicationUsers.Where(p => p.UserName == "Admin").FirstOrDefault().Id;
+            expense.UserId = _context.Users.Where(p => p.UserName == "Admin").FirstOrDefault().Id;
             expense.CreatedDate = DateTime.Now;
             expense.LastModifiedDate = expense.CreatedDate;
 
@@ -155,6 +155,7 @@ namespace FinanceOrganizer.web.Controllers
             _context.SaveChanges();
             return new NoContentResult();
         }
+
         #endregion
     }
 }

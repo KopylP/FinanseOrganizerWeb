@@ -27,6 +27,9 @@ import { ConfirmDialogService } from './services/confirm-dialog.service';
 import { ExpenseEditDialogService } from './services/expense-edit-dialog.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle'; 
 import { ExpenseStatePipe } from './components/pipes/expense-state.pipe';
+import { ChartHolderComponent } from './components/chart-holder/chart-holder.component';
+import { BarChartComponent } from './components/bar-chart/bar-chart.component';
+import { ChartService } from './services/chart.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,6 +40,8 @@ import { ExpenseStatePipe } from './components/pipes/expense-state.pipe';
     FileUploadComponent,
     ConfirmDialogComponent,
     ExpenseListElementComponent,
+    ChartHolderComponent,
+    BarChartComponent,
     ExpenseStatePipe
   ],
   imports: [
@@ -58,6 +63,7 @@ import { ExpenseStatePipe } from './components/pipes/expense-state.pipe';
     RouterModule.forRoot([
       { path: '', component: ExpenseDatesComponent, pathMatch: 'full' },
       { path: 'dates/:date', component: ExpenseDatesComponent },
+      { path: 'charts', component: ChartHolderComponent }
       //{ path: 'expense/create', component: ExpenseEditComponent, canDeactivate: [SaveInformationWarnGuard] },
       //{ path: 'expense/edit/:id', component: ExpenseEditComponent, canDeactivate: [SaveInformationWarnGuard] }
 
@@ -77,7 +83,8 @@ import { ExpenseStatePipe } from './components/pipes/expense-state.pipe';
     MatDatepickerIntl,
     SaveInformationWarnGuard,
     ConfirmDialogService,
-    ExpenseEditDialogService],
+    ExpenseEditDialogService,
+    ChartService],
   bootstrap: [AppComponent],
   entryComponents: [ConfirmDialogComponent,
     ExpenseEditComponent]
