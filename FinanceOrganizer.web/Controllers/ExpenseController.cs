@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FinanceOrganizer.web.Api.ApiErrors;
 using FinanceOrganizer.web.Data;
 using FinanceOrganizer.web.Data.Models;
 using FinanceOrganizer.web.ViewModels;
@@ -57,7 +58,7 @@ namespace FinanceOrganizer.web.Controllers
         {
 
             var user = _context.Users.FirstOrDefault(p => p.UserName == userName);
-            if (user == null) return NotFound();
+            if (user == null) return NotFound(new NotFoundError("The user was not found"));
             var time = DateTime.ParseExact(date, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             var expenses = _context
                 .Expenses
@@ -76,7 +77,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpPost("file/load"), DisableRequestSizeLimit]
         public async Task<IActionResult> PostFile([FromForm] PhotoViewModel model)
         {
-            if (model == null) return StatusCode(500);
+            if (model == null) return StatusCode(500, new InternalServerError("Model is null"));
             var expense = _context.Expenses.Find(model.ExpenseId);
             if (expense == null) return NotFound();
             string path = _env.WebRootPath  + expense.Path;
@@ -95,9 +96,7 @@ namespace FinanceOrganizer.web.Controllers
         public IActionResult Get(string id)
         {
             var expense = _context.Expenses.Where(p => p.Id == id).FirstOrDefault();
-            if (expense == null) return NotFound(new {
-                Error = $"Has no Expense which has id {id}"
-            });
+            if (expense == null) return NotFound(new NotFoundError($"Has no Expense which has id {id}"));
             var model = expense.Adapt<ExpenseViewModel>();
 
             FileInfo f = new FileInfo(_env.WebRootPath + expense.Path);
@@ -113,7 +112,7 @@ namespace FinanceOrganizer.web.Controllers
         {
             //TODO
             //Якщо model = null поверни помилку сервера
-            if (model == null) return StatusCode(500);
+            if (model == null) return StatusCode(500, new InternalServerError("Model is null"));
             Expense expense = new Expense();
             expense.Cost = model.Cost;
             expense.Id = Guid.NewGuid().ToString();
@@ -132,7 +131,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]ExpenseViewModel model)
         {
-            if (model == null) return StatusCode(500);
+            if (model == null) return StatusCode(500, new InternalServerError("Model is null"));
 
             var expense = _context.Expenses.Where(p => p.Id == model.Id).FirstOrDefault();
             if (expense == null) return NotFound();

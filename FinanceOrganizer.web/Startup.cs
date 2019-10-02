@@ -87,6 +87,9 @@ namespace FinanceOrganizer.web
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
+
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

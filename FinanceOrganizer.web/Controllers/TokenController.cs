@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using FinanceOrganizer.web.Api.ApiErrors;
 using FinanceOrganizer.web.Data;
 using FinanceOrganizer.web.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -39,7 +40,7 @@ namespace FinanceOrganizer.web.Controllers
         [HttpPost("Auth")]
         public async Task<IActionResult> Auth([FromBody]TokenRequestViewModel model)
         {
-            if (model == null) return new StatusCodeResult(500);
+            if (model == null) return StatusCode(500, new InternalServerError("Model is null"));
             switch(model.grant_type)
             {
                 case "password":

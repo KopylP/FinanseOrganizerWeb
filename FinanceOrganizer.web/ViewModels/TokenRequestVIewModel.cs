@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FinanceOrganizer.web.Data.Models
 {
+    [JsonObject(MemberSerialization.OptOut)]
     public class TokenRequestViewModel
     {
         #region constructor
