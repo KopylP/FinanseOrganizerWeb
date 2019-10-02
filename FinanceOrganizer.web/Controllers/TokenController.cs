@@ -22,14 +22,14 @@ namespace FinanceOrganizer.web.Controllers
         #region fields
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
-        private IConfiguration _configuration; 
+        private IConfiguration _configuration;
         #endregion
 
         #region constructor
         public TokenController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
-            IConfiguration configuration): base(context)
+            IConfiguration configuration) : base(context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -41,7 +41,7 @@ namespace FinanceOrganizer.web.Controllers
         public async Task<IActionResult> Auth([FromBody]TokenRequestViewModel model)
         {
             if (model == null) return StatusCode(500, new InternalServerError("Model is null"));
-            switch(model.grant_type)
+            switch (model.grant_type)
             {
                 case "password":
                     return await GetToken(model);
@@ -55,43 +55,46 @@ namespace FinanceOrganizer.web.Controllers
             try
             {
                 var user = await _userManager.FindByNameAsync(model.username);
-                if (user == null && !model.username.Contains("@"))
+                if (user == null && model.username.Contains("@"))
                 {
                     user = await _userManager.FindByEmailAsync(model.username);
-                    if (user == null || !await _userManager.CheckPasswordAsync(user, model.password))
-                    {
-                        return new UnauthorizedResult();
-                    }
                 }
-                    DateTime now = DateTime.Now;
 
-                    var claims = new[]
-                    {
-                        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString())
-                    };
-                    var tokenExpirationMins =
-                        _configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
-                    var issuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(_configuration["Auth:Jwt:Key"])
-                        );
-                    var token = new JwtSecurityToken(
-                            issuer: _configuration["Auth:Jwt:Issuer"],
-                            audience: _configuration["Auth:Jwt:Audience"],
-                            claims: claims,
-                            notBefore: now,
-                            expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
-                            signingCredentials: new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256));
-                    var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
-                    var response = new TokenResponseViewModel()
-                    {
-                        token = encodedToken,
-                        expiration = tokenExpirationMins
-                    };
-                    return Json(response);
+                if (user == null || !await _userManager.CheckPasswordAsync(user, model.password))
+                {
+                    return new UnauthorizedResult();
+                }
+
+                DateTime now = DateTime.Now;
+
+                var claims = new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString())
+                };
+                var tokenExpirationMins =
+                    _configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
+                var issuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(_configuration["Auth:Jwt:Key"])
+                    );
+                var token = new JwtSecurityToken(
+                        issuer: _configuration["Auth:Jwt:Issuer"],
+                        audience: _configuration["Auth:Jwt:Audience"],
+                        claims: claims,
+                        notBefore: now,
+                        expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
+                        signingCredentials: new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256));
+                var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+                var response = new TokenResponseViewModel()
+                {
+                    token = encodedToken,
+                    expiration = tokenExpirationMins
+                };
+                return Json(response);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new UnauthorizedResult();
             }
